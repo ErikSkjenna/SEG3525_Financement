@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BureauZen | Boutique ergonomique</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <noscript>Ce prototype nécessite JavaScript pour fonctionner.</noscript>
+
+  <div id="app" v-cloak>
+    <header class="site-header" id="top">
+      <nav class="navbar" aria-label="Navigation principale">
+        <a class="brand" href="#top" @click.prevent="setView('shop')" aria-label="Retour à la boutique BureauZen">
+          <span class="brand-icon">BZ</span>
+          <span>
+            <strong>BureauZen</strong>
+            <small>Étudier mieux, travailler mieux</small>
+          </span>
+        </a>
+
+        <button class="menu-toggle" type="button" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen.toString()" aria-controls="main-menu">
+          ☰
+          <span class="sr-only">Ouvrir ou fermer le menu</span>
+        </button>
+
+        <div class="nav-links" id="main-menu" :class="{ open: menuOpen }">
+          <button type="button" @click="setView('shop')">Produits</button>
+          <button type="button" @click="scrollToSection('processus')">Processus</button>
+          <button type="button" @click="scrollToSection('sondage')">Sondage</button>
+          <button class="cart-pill" type="button" @click="setView('checkout')" aria-label="Voir le panier">
+            Panier <span>{{ cartCount }}</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <p class="eyebrow">Offre de lancement : livraison gratuite dès 75 $</p>
+          <h1 id="hero-title">Crée ton bureau calme, confortable et productif.</h1>
+          <p>
+            BureauZen propose des accessoires ergonomiques et organisés pour les étudiants et les personnes qui travaillent longtemps à leur bureau.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-btn" type="button" @click="scrollToSection('catalogue')">Magasiner maintenant</button>
+            <button class="secondary-btn" type="button" @click="scrollToSection('processus')">Voir les étapes d’achat</button>
+          </div>
+        </div>
+
+        <aside class="hero-card" aria-label="Promotion principale">
+          <span class="discount-badge">-20 %</span>
+          <h2>Ensemble concentration</h2>
+          <p>Support laptop + lampe douce + repose-poignet.</p>
+          <strong>À partir de 89,99 $</strong>
+          <button type="button" @click="quickAddBundle">Ajouter l’ensemble</button>
+        </aside>
+      </section>
+
+      <section class="process-section" id="processus" aria-labelledby="process-title">
+        <div class="section-heading">
+          <p class="eyebrow">Image du système</p>
+          <h2 id="process-title">Trois processus interactifs clairement visibles</h2>
+          <p>Le prototype rend les actions importantes faciles à comprendre : explorer, acheter, puis partager son expérience.</p>
+        </div>
+
+        <div class="process-grid">
+          <article class="process-card">
+            <span>01</span>
+            <h3>Explorer par facettes</h3>
+            <p>Filtrer les produits par catégorie, budget, ambiance, note, matériau et disponibilité.</p>
+          </article>
+          <article class="process-card">
+            <span>02</span>
+            <h3>Suivre les instructions</h3>
+            <p>Le parcours d’achat montre ce qui est fait, l’étape actuelle et ce qu’il reste à compléter.</p>
+          </article>
+          <article class="process-card">
+            <span>03</span>
+            <h3>Communiquer</h3>
+            <p>Un court sondage non intrusif permet de donner une rétroaction après la visite.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shop-layout" id="catalogue" v-show="view === 'shop'" aria-labelledby="catalogue-title">
+        <aside class="filters" aria-label="Recherche à facettes">
+          <div class="filter-header">
+            <h2>Recherche à facettes</h2>
+            <button type="button" @click="resetFilters">Réinitialiser</button>
+          </div>
+
+          <label class="search-label" for="search">Recherche</label>
+          <input id="search" type="search" v-model="filters.query" placeholder="ex. lampe, support, câble" />
+
+          <fieldset>
+            <legend>Catégorie</legend>
+            <label v-for="category in categories" :key="category">
+              <input type="checkbox" :value="category" v-model="filters.categories" />
+              {{ category }}
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Ambiance</legend>
+            <label v-for="mood in moods" :key="mood">
+              <input type="checkbox" :value="mood" v-model="filters.moods" />
+              {{ mood }}
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Matériau principal</legend>
+            <label v-for="material in materials" :key="material">
+              <input type="checkbox" :value="material" v-model="filters.materials" />
+              {{ material }}
+            </label>
+          </fieldset>
+
+          <label class="range-label" for="max-price">
+            Prix maximum : <strong>{{ formatPrice(filters.maxPrice) }}</strong>
+          </label>
+          <input id="max-price" type="range" min="20" max="200" step="5" v-model.number="filters.maxPrice" />
+
+          <label class="select-label" for="rating-filter">Note minimale</label>
+          <select id="rating-filter" v-model.number="filters.minRating">
+            <option :value="0">Toutes les notes</option>
+            <option :value="4">4 étoiles et plus</option>
+            <option :value="4.5">4,5 étoiles et plus</option>
+          </select>
+
+          <label class="toggle-line">
+            <input type="checkbox" v-model="filters.inStockOnly" />
+            Seulement les produits en stock
+          </label>
+        </aside>
+
+        <div class="catalogue-panel">
+          <div class="section-heading align-left">
+            <p class="eyebrow">Explorer et converger</p>
+            <h2 id="catalogue-title">{{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }} trouvé{{ filteredProducts.length > 1 ? 's' : '' }}</h2>
+            <p>Les cartes indiquent le prix, les caractéristiques importantes et la disponibilité pour aider l’utilisateur à comparer rapidement.</p>
+          </div>
+
+          <div class="sort-row">
+            <p>{{ activeFilterSummary }}</p>
+            <label>
+              Trier par
+              <select v-model="sortBy">
+                <option value="popular">Popularité</option>
+                <option value="priceAsc">Prix croissant</option>
+                <option value="priceDesc">Prix décroissant</option>
+                <option value="rating">Meilleure note</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="product-grid" v-if="filteredProducts.length">
+            <article class="product-card" v-for="product in sortedProducts" :key="product.id">
+              <div class="product-visual" :class="product.visualClass" aria-hidden="true">
+                <span>{{ product.emoji }}</span>
+              </div>
+              <div class="product-body">
+                <div class="product-meta">
+                  <span>{{ product.category }}</span>
+                  <span>★ {{ product.rating }}</span>
+                </div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <ul>
+                  <li>{{ product.mood }}</li>
+                  <li>{{ product.material }}</li>
+                  <li>{{ product.stock ? 'En stock' : 'Précommande' }}</li>
+                </ul>
+                <div class="product-footer">
+                  <strong>{{ formatPrice(product.price) }}</strong>
+                  <button type="button" @click="addToCart(product)" :disabled="!product.stock">
+                    {{ product.stock ? 'Ajouter' : 'Indisponible' }}
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="empty-state" v-else>
+            <h3>Aucun produit ne correspond aux filtres.</h3>
+            <p>Essaie d’élargir ton budget ou de retirer une facette.</p>
+            <button type="button" @click="resetFilters">Réinitialiser la recherche</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkout" v-show="view === 'checkout'" aria-labelledby="checkout-title">
+        <div class="section-heading">
+          <p class="eyebrow">Suivre des instructions</p>
+          <h2 id="checkout-title">Achat guidé en quatre étapes</h2>
+          <p>La barre d’étapes montre clairement ce qui est terminé, l’étape actuelle et ce qu’il reste à faire.</p>
+        </div>
+
+        <ol class="stepper" aria-label="Progression de l’achat">
+          <li v-for="(step, index) in steps" :key="step" :class="stepClass(index)">
+            <span>{{ index + 1 }}</span>
+            {{ step }}
+          </li>
+        </ol>
+
+        <div class="checkout-panel">
+          <section v-if="checkoutStep === 0" aria-labelledby="cart-title">
+            <h3 id="cart-title">Votre panier</h3>
+            <div class="cart-empty" v-if="cart.length === 0">
+              <p>Ton panier est vide. Ajoute au moins un produit pour commencer le paiement.</p>
+              <button type="button" @click="setView('shop')">Retour aux produits</button>
+            </div>
+
+            <div v-else>
+              <article class="cart-item" v-for="item in cart" :key="item.id">
+                <div>
+                  <strong>{{ item.name }}</strong>
+                  <p>{{ formatPrice(item.price) }} × {{ item.quantity }}</p>
+                </div>
+                <div class="quantity-controls" aria-label="Contrôles de quantité">
+                  <button type="button" @click="decreaseQuantity(item.id)">−</button>
+                  <span>{{ item.quantity }}</span>
+                  <button type="button" @click="increaseQuantity(item.id)">+</button>
+                </div>
+              </article>
+
+              <div class="total-row">
+                <span>Total estimé</span>
+                <strong>{{ formatPrice(cartTotal) }}</strong>
+              </div>
+              <button class="primary-btn full" type="button" @click="checkoutStep = 1">Continuer vers les informations</button>
+            </div>
+          </section>
+
+          <section v-if="checkoutStep === 1" aria-labelledby="info-title">
+            <h3 id="info-title">Informations personnelles</h3>
+            <form class="form-grid" @submit.prevent="goToPayment">
+              <label>
+                Nom complet
+                <input type="text" v-model.trim="customer.name" required placeholder="Ex. Alex Tremblay" />
+              </label>
+              <label>
+                Courriel
+                <input type="email" v-model.trim="customer.email" required placeholder="alex@email.com" />
+              </label>
+              <label>
+                Adresse
+                <input type="text" v-model.trim="customer.address" required placeholder="123 rue Principale" />
+              </label>
+              <label>
+                Ville
+                <input type="text" v-model.trim="customer.city" required placeholder="Ottawa" />
+              </label>
+              <div class="form-actions">
+                <button class="secondary-btn" type="button" @click="checkoutStep = 0">Retour</button>
+                <button class="primary-btn" type="submit">Continuer au paiement</button>
+              </div>
+            </form>
+          </section>
+
+          <section v-if="checkoutStep === 2" aria-labelledby="payment-title">
+            <h3 id="payment-title">Paiement fictif</h3>
+            <p class="form-note">Aucune vraie carte n’est utilisée. Ce formulaire sert seulement à simuler le processus d’achat.</p>
+            <form class="form-grid" @submit.prevent="confirmOrder">
+              <label>
+                Nom sur la carte
+                <input type="text" v-model.trim="payment.cardName" required placeholder="Alex Tremblay" />
+              </label>
+              <label>
+                Numéro de carte fictif
+                <input type="text" v-model.trim="payment.cardNumber" required minlength="12" maxlength="19" placeholder="4242 4242 4242 4242" />
+              </label>
+              <label>
+                Expiration
+                <input type="text" v-model.trim="payment.expiry" required placeholder="12/29" />
+              </label>
+              <label>
+                CVC
+                <input type="text" v-model.trim="payment.cvc" required minlength="3" maxlength="4" placeholder="123" />
+              </label>
+              <div class="form-actions">
+                <button class="secondary-btn" type="button" @click="checkoutStep = 1">Retour</button>
+                <button class="primary-btn" type="submit">Confirmer l’achat</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="confirmation" v-if="checkoutStep === 3" aria-labelledby="confirm-title">
+            <span class="success-icon">✓</span>
+            <h3 id="confirm-title">Commande confirmée</h3>
+            <p>
+              Merci {{ customer.name || 'pour votre achat' }} ! Une confirmation fictive a été préparée pour {{ customer.email || 'votre courriel' }}.
+            </p>
+            <p><strong>Numéro de commande :</strong> BZ-{{ orderNumber }}</p>
+            <button class="primary-btn" type="button" @click="scrollToSection('sondage')">Répondre au sondage</button>
+          </section>
+        </div>
+      </section>
+
+      <section class="survey-section" id="sondage" aria-labelledby="survey-title">
+        <div class="survey-card">
+          <div>
+            <p class="eyebrow">Processus de communication</p>
+            <h2 id="survey-title">Ton avis aide BureauZen à s’améliorer.</h2>
+            <p>
+              Le sondage reste court et positif : trois champs seulement, sans bloquer l’achat ni la navigation.
+            </p>
+          </div>
+
+          <form class="survey-form" @submit.prevent="submitSurvey" v-if="!surveySubmitted">
+            <label>
+              Comment évalues-tu ton expérience ?
+              <select v-model="survey.rating" required>
+                <option value="" disabled>Choisir une note</option>
+                <option value="5">5 - Excellente</option>
+                <option value="4">4 - Très bonne</option>
+                <option value="3">3 - Correcte</option>
+                <option value="2">2 - À améliorer</option>
+                <option value="1">1 - Difficile</option>
+              </select>
+            </label>
+            <label>
+              Qu’est-ce qui t’a aidé à choisir ?
+              <textarea v-model.trim="survey.comment" rows="4" placeholder="Ex. Les filtres m’ont aidé à trouver une lampe douce."></textarea>
+            </label>
+            <label class="toggle-line">
+              <input type="checkbox" v-model="survey.contact" />
+              J’accepte d’être contacté pour une courte question de suivi.
+            </label>
+            <button class="primary-btn" type="submit">Envoyer mon avis</button>
+          </form>
+
+          <div class="survey-thanks" v-else>
+            <span class="success-icon">✓</span>
+            <h3>Merci pour ton retour !</h3>
+            <p>Ton commentaire a été enregistré dans ce prototype.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 BureauZen — Prototype haute-fidélité pour SEG3525.</p>
+      <a href="#top">Retour en haut</a>
+    </footer>
+
+    <div class="toast" role="status" aria-live="polite" v-if="toastMessage">
+      {{ toastMessage }}
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
