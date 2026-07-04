@@ -3,291 +3,350 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
-      view: "shop",
-      menuOpen: false,
-      sortBy: "popular",
-      toastMessage: "",
-      toastTimer: null,
-      checkoutStep: 0,
-      orderNumber: Math.floor(100000 + Math.random() * 900000),
+      scenarioMode: false,
+      checkoutStep: 1,
+
+      checkoutSteps: [
+        { number: 1, label: "Panier" },
+        { number: 2, label: "Informations" },
+        { number: 3, label: "Paiement" },
+        { number: 4, label: "Confirmation" }
+      ],
+
+      products: [
+        {
+          id: "lampe-focus",
+          name: "Lampe douce FocusGlow",
+          category: "Éclairage",
+          price: 59.99,
+          color: "Blanc",
+          comfort: "Confort",
+          rating: 4.8,
+          popular: 98,
+          icon: "💡",
+          deal: true,
+          description: "Lampe de bureau avec lumière douce pour réduire la fatigue visuelle."
+        },
+        {
+          id: "support-eleva",
+          name: "Support laptop Éléva",
+          category: "Ergonomie",
+          price: 74.99,
+          color: "Argent",
+          comfort: "Premium",
+          rating: 4.7,
+          popular: 94,
+          icon: "💻",
+          deal: true,
+          description: "Support ajustable pour placer l’écran à une hauteur plus confortable."
+        },
+        {
+          id: "repose-nuage",
+          name: "Repose-poignet Nuage",
+          category: "Ergonomie",
+          price: 29.99,
+          color: "Bleu",
+          comfort: "Confort",
+          rating: 4.6,
+          popular: 89,
+          icon: "☁️",
+          deal: true,
+          description: "Coussin doux pour soutenir les poignets pendant les longues sessions."
+        },
+        {
+          id: "organiseur-clair",
+          name: "Organiseur Clair",
+          category: "Rangement",
+          price: 39.99,
+          color: "Blanc",
+          comfort: "Essentiel",
+          rating: 4.3,
+          popular: 78,
+          icon: "🗂️",
+          deal: false,
+          description: "Petit rangement de bureau pour garder les notes et accessoires visibles."
+        },
+        {
+          id: "tapis-calm",
+          name: "Tapis de bureau CalmDesk",
+          category: "Confort",
+          price: 44.99,
+          color: "Bleu",
+          comfort: "Confort",
+          rating: 4.5,
+          popular: 84,
+          icon: "🟦",
+          deal: false,
+          description: "Grand tapis doux pour protéger le bureau et améliorer le confort."
+        },
+        {
+          id: "chaise-milo",
+          name: "Coussin lombaire Milo",
+          category: "Ergonomie",
+          price: 49.99,
+          color: "Noir",
+          comfort: "Premium",
+          rating: 4.7,
+          popular: 91,
+          icon: "🪑",
+          deal: false,
+          description: "Support lombaire pour améliorer la posture pendant les longues journées."
+        },
+        {
+          id: "plante-zen",
+          name: "Plante décorative Zen",
+          category: "Décoration",
+          price: 24.99,
+          color: "Vert",
+          comfort: "Essentiel",
+          rating: 4.2,
+          popular: 64,
+          icon: "🌿",
+          deal: false,
+          description: "Petite plante artificielle pour ajouter une touche calme au bureau."
+        },
+        {
+          id: "casque-silence",
+          name: "Casque Silence Study",
+          category: "Concentration",
+          price: 119.99,
+          color: "Noir",
+          comfort: "Premium",
+          rating: 4.9,
+          popular: 99,
+          icon: "🎧",
+          deal: false,
+          description: "Casque confortable pour mieux se concentrer dans un environnement bruyant."
+        },
+        {
+          id: "minuterie-focus",
+          name: "Minuterie Focus 25",
+          category: "Concentration",
+          price: 34.99,
+          color: "Blanc",
+          comfort: "Essentiel",
+          rating: 4.4,
+          popular: 73,
+          icon: "⏱️",
+          deal: false,
+          description: "Minuterie simple pour organiser les périodes d’étude et les pauses."
+        }
+      ],
+
       filters: {
-        query: "",
-        categories: [],
-        moods: [],
-        materials: [],
-        maxPrice: 200,
+        search: "",
+        category: "Tous",
+        maxPrice: 180,
+        colors: [],
+        comfort: "Tous",
         minRating: 0,
-        inStockOnly: false
+        sort: "popular"
       },
+
+      cart: [],
+
       customer: {
         name: "",
         email: "",
         address: "",
-        city: ""
+        city: "",
+        postal: ""
       },
+
       payment: {
         cardName: "",
         cardNumber: "",
         expiry: "",
         cvc: ""
       },
+
       survey: {
-        rating: "",
-        comment: "",
-        contact: false
+        rating: "5",
+        comment: ""
       },
-      surveySubmitted: false,
-      cart: [],
-      steps: ["Panier", "Informations", "Paiement", "Confirmation"],
-      products: [
-        {
-          id: 1,
-          name: "Lampe douce FocusGlow",
-          category: "Éclairage",
-          mood: "Calme",
-          material: "Métal",
-          price: 54.99,
-          rating: 4.7,
-          popularity: 98,
-          stock: true,
-          emoji: "💡",
-          visualClass: "visual-yellow",
-          description: "Une lampe ajustable avec lumière chaude pour réduire la fatigue visuelle pendant les longues sessions d’étude."
-        },
-        {
-          id: 2,
-          name: "Support laptop Éléva",
-          category: "Ergonomie",
-          mood: "Productif",
-          material: "Aluminium",
-          price: 64.99,
-          rating: 4.8,
-          popularity: 96,
-          stock: true,
-          emoji: "💻",
-          visualClass: "visual-blue",
-          description: "Support stable qui élève l’écran à hauteur des yeux pour améliorer la posture."
-        },
-        {
-          id: 3,
-          name: "Repose-poignet Nuage",
-          category: "Confort",
-          mood: "Calme",
-          material: "Tissu",
-          price: 29.99,
-          rating: 4.4,
-          popularity: 77,
-          stock: true,
-          emoji: "☁️",
-          visualClass: "visual-teal",
-          description: "Coussin doux pour soutenir les poignets pendant la prise de notes ou le codage."
-        },
-        {
-          id: 4,
-          name: "Organisateur ModuDesk",
-          category: "Organisation",
-          mood: "Minimaliste",
-          material: "Bois",
-          price: 44.99,
-          rating: 4.5,
-          popularity: 82,
-          stock: true,
-          emoji: "🗂️",
-          visualClass: "visual-green",
-          description: "Plateau modulaire pour ranger cahiers, câbles, stylos et petits accessoires."
-        },
-        {
-          id: 5,
-          name: "Station câbles CleanLine",
-          category: "Organisation",
-          mood: "Minimaliste",
-          material: "Silicone",
-          price: 24.99,
-          rating: 4.2,
-          popularity: 71,
-          stock: true,
-          emoji: "🔌",
-          visualClass: "visual-slate",
-          description: "Petite station adhésive pour éviter les câbles emmêlés et garder un bureau propre."
-        },
-        {
-          id: 6,
-          name: "Tapis de bureau ZenMat",
-          category: "Confort",
-          mood: "Calme",
-          material: "Tissu",
-          price: 39.99,
-          rating: 4.6,
-          popularity: 88,
-          stock: true,
-          emoji: "🧩",
-          visualClass: "visual-purple",
-          description: "Grand tapis doux qui définit une zone de travail claire et réduit le bruit des mouvements."
-        },
-        {
-          id: 7,
-          name: "Tablette murale MiniShelf",
-          category: "Organisation",
-          mood: "Productif",
-          material: "Bois",
-          price: 74.99,
-          rating: 4.1,
-          popularity: 62,
-          stock: false,
-          emoji: "📚",
-          visualClass: "visual-green",
-          description: "Tablette compacte pour libérer la surface du bureau sans perdre les objets importants."
-        },
-        {
-          id: 8,
-          name: "Minuteur Pomodoro Orb",
-          category: "Productivité",
-          mood: "Productif",
-          material: "Plastique",
-          price: 34.99,
-          rating: 4.3,
-          popularity: 74,
-          stock: true,
-          emoji: "⏱️",
-          visualClass: "visual-teal",
-          description: "Minuteur visuel pour alterner entre concentration et pauses sans dépendre du téléphone."
-        },
-        {
-          id: 9,
-          name: "Chaise compacte Align",
-          category: "Ergonomie",
-          mood: "Productif",
-          material: "Tissu",
-          price: 189.99,
-          rating: 4.6,
-          popularity: 85,
-          stock: true,
-          emoji: "🪑",
-          visualClass: "visual-slate",
-          description: "Chaise compacte avec soutien lombaire pour les petits espaces d’étude."
-        },
-        {
-          id: 10,
-          name: "Lampe Halo USB",
-          category: "Éclairage",
-          mood: "Minimaliste",
-          material: "Aluminium",
-          price: 49.99,
-          rating: 4.0,
-          popularity: 69,
-          stock: true,
-          emoji: "🌙",
-          visualClass: "visual-blue",
-          description: "Lampe USB mince avec trois intensités lumineuses et un style discret."
-        }
-      ]
+
+      surveySubmitted: false
     };
   },
 
   computed: {
     categories() {
-      return [...new Set(this.products.map(product => product.category))].sort();
+      return [...new Set(this.products.map(product => product.category))];
     },
 
-    moods() {
-      return [...new Set(this.products.map(product => product.mood))].sort();
-    },
-
-    materials() {
-      return [...new Set(this.products.map(product => product.material))].sort();
+    colors() {
+      return [...new Set(this.products.map(product => product.color))];
     },
 
     filteredProducts() {
-      const query = this.filters.query.trim().toLowerCase();
+      let results = this.products.filter(product => {
+        const searchMatch =
+          this.filters.search.trim() === "" ||
+          product.name.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+          product.description.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+          product.category.toLowerCase().includes(this.filters.search.toLowerCase());
 
-      return this.products.filter(product => {
-        const matchesQuery = !query || [product.name, product.description, product.category, product.mood, product.material]
-          .join(" ")
-          .toLowerCase()
-          .includes(query);
+        const categoryMatch =
+          this.filters.category === "Tous" ||
+          product.category === this.filters.category;
 
-        const matchesCategory = this.filters.categories.length === 0 || this.filters.categories.includes(product.category);
-        const matchesMood = this.filters.moods.length === 0 || this.filters.moods.includes(product.mood);
-        const matchesMaterial = this.filters.materials.length === 0 || this.filters.materials.includes(product.material);
-        const matchesPrice = product.price <= this.filters.maxPrice;
-        const matchesRating = product.rating >= this.filters.minRating;
-        const matchesStock = !this.filters.inStockOnly || product.stock;
+        const priceMatch = product.price <= this.filters.maxPrice;
 
-        return matchesQuery && matchesCategory && matchesMood && matchesMaterial && matchesPrice && matchesRating && matchesStock;
+        const colorMatch =
+          this.filters.colors.length === 0 ||
+          this.filters.colors.includes(product.color);
+
+        const comfortMatch =
+          this.filters.comfort === "Tous" ||
+          product.comfort === this.filters.comfort;
+
+        const ratingMatch = product.rating >= this.filters.minRating;
+
+        return searchMatch && categoryMatch && priceMatch && colorMatch && comfortMatch && ratingMatch;
       });
-    },
 
-    sortedProducts() {
-      const products = [...this.filteredProducts];
-
-      if (this.sortBy === "priceAsc") {
-        return products.sort((a, b) => a.price - b.price);
+      if (this.filters.sort === "priceLow") {
+        results.sort((a, b) => a.price - b.price);
+      } else if (this.filters.sort === "priceHigh") {
+        results.sort((a, b) => b.price - a.price);
+      } else if (this.filters.sort === "rating") {
+        results.sort((a, b) => b.rating - a.rating);
+      } else {
+        results.sort((a, b) => b.popular - a.popular);
       }
 
-      if (this.sortBy === "priceDesc") {
-        return products.sort((a, b) => b.price - a.price);
-      }
-
-      if (this.sortBy === "rating") {
-        return products.sort((a, b) => b.rating - a.rating);
-      }
-
-      return products.sort((a, b) => b.popularity - a.popularity);
+      return results;
     },
 
     cartCount() {
       return this.cart.reduce((total, item) => total + item.quantity, 0);
     },
 
-    cartTotal() {
-      return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    subtotal() {
+      return this.cart.reduce((total, item) => {
+        return total + item.price * item.quantity;
+      }, 0);
     },
 
-    activeFilterSummary() {
-      const activeCount = this.filters.categories.length + this.filters.moods.length + this.filters.materials.length;
+    hasDeal() {
+      const requiredDealItems = ["lampe-focus", "support-eleva", "repose-nuage"];
 
-      if (!activeCount && !this.filters.query && this.filters.maxPrice === 200 && this.filters.minRating === 0 && !this.filters.inStockOnly) {
-        return "Aucun filtre actif — tous les produits sont visibles.";
+      return requiredDealItems.every(requiredId => {
+        return this.cart.some(item => item.id === requiredId && item.quantity > 0);
+      });
+    },
+
+    dealSubtotal() {
+      if (!this.hasDeal) {
+        return 0;
       }
 
-      return `${activeCount} facette${activeCount > 1 ? "s" : ""} sélectionnée${activeCount > 1 ? "s" : ""}, budget max ${this.formatPrice(this.filters.maxPrice)}.`;
+      const requiredDealItems = ["lampe-focus", "support-eleva", "repose-nuage"];
+
+      return this.cart.reduce((total, item) => {
+        if (requiredDealItems.includes(item.id)) {
+          return total + item.price * item.quantity;
+        }
+
+        return total;
+      }, 0);
+    },
+
+    discount() {
+      if (!this.hasDeal) {
+        return 0;
+      }
+
+      return this.dealSubtotal * 0.2;
+    },
+
+    shipping() {
+      const afterDiscount = this.subtotal - this.discount;
+
+      if (this.cart.length === 0) {
+        return 0;
+      }
+
+      if (afterDiscount >= 100) {
+        return 0;
+      }
+
+      return 9.99;
+    },
+
+    taxes() {
+      return (this.subtotal - this.discount + this.shipping) * 0.13;
+    },
+
+    total() {
+      return this.subtotal - this.discount + this.shipping + this.taxes;
+    },
+
+    progressWidth() {
+      const progress = ((this.checkoutStep - 1) / 3) * 100;
+      return `${progress}%`;
+    }
+  },
+
+  watch: {
+    cart: {
+      handler(newCart) {
+        localStorage.setItem("bureauzen-cart", JSON.stringify(newCart));
+      },
+      deep: true
+    }
+  },
+
+  mounted() {
+    const savedCart = localStorage.getItem("bureauzen-cart");
+
+    if (savedCart) {
+      this.cart = JSON.parse(savedCart);
     }
   },
 
   methods: {
-    formatPrice(value) {
+    formatMoney(value) {
       return new Intl.NumberFormat("fr-CA", {
         style: "currency",
         currency: "CAD"
       }).format(value);
     },
 
-    setView(viewName) {
-      this.view = viewName;
-      this.menuOpen = false;
-      window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
-    },
-
     scrollToSection(sectionId) {
-      this.menuOpen = false;
       const section = document.getElementById(sectionId);
+
       if (section) {
         section.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     },
 
+    startScenario() {
+      this.scenarioMode = true;
+
+      this.filters.search = "";
+      this.filters.category = "Ergonomie";
+      this.filters.maxPrice = 90;
+      this.filters.colors = ["Bleu", "Blanc", "Argent"];
+      this.filters.comfort = "Tous";
+      this.filters.minRating = 4.5;
+      this.filters.sort = "rating";
+
+      this.scrollToSection("boutique");
+    },
+
     resetFilters() {
+      this.scenarioMode = false;
+
       this.filters = {
-        query: "",
-        categories: [],
-        moods: [],
-        materials: [],
-        maxPrice: 200,
+        search: "",
+        category: "Tous",
+        maxPrice: 180,
+        colors: [],
+        comfort: "Tous",
         minRating: 0,
-        inStockOnly: false
+        sort: "popular"
       };
-      this.sortBy = "popular";
-      this.showToast("Filtres réinitialisés.");
     },
 
     addToCart(product) {
@@ -296,70 +355,108 @@ createApp({
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        this.cart.push({ ...product, quantity: 1 });
+        this.cart.push({
+          ...product,
+          quantity: 1
+        });
       }
-
-      this.showToast(`${product.name} ajouté au panier.`);
     },
 
-    quickAddBundle() {
-      const bundleProductIds = [1, 2, 3];
-      bundleProductIds.forEach(id => {
-        const product = this.products.find(item => item.id === id);
-        if (product && product.stock) {
+    addDealBundle() {
+      const dealIds = ["lampe-focus", "support-eleva", "repose-nuage"];
+
+      dealIds.forEach(id => {
+        const product = this.products.find(product => product.id === id);
+
+        if (product) {
           this.addToCart(product);
         }
       });
-      this.setView("checkout");
+
+      this.checkoutStep = 1;
+      this.scrollToSection("panier");
+    },
+
+    removeFromCart(productId) {
+      this.cart = this.cart.filter(item => item.id !== productId);
+
+      if (this.cart.length === 0) {
+        this.checkoutStep = 1;
+      }
     },
 
     increaseQuantity(productId) {
-      const item = this.cart.find(product => product.id === productId);
+      const item = this.cart.find(item => item.id === productId);
+
       if (item) {
         item.quantity += 1;
       }
     },
 
     decreaseQuantity(productId) {
-      const item = this.cart.find(product => product.id === productId);
-      if (!item) return;
+      const item = this.cart.find(item => item.id === productId);
+
+      if (!item) {
+        return;
+      }
 
       if (item.quantity > 1) {
         item.quantity -= 1;
       } else {
-        this.cart = this.cart.filter(product => product.id !== productId);
+        this.removeFromCart(productId);
       }
     },
 
-    goToPayment() {
-      this.checkoutStep = 2;
-      this.showToast("Informations enregistrées. Prochaine étape : paiement fictif.");
+    nextStep() {
+      if (this.checkoutStep === 1 && this.cart.length === 0) {
+        alert("Ajoutez au moins un produit avant de continuer.");
+        return;
+      }
+
+      if (this.checkoutStep === 2 && !this.customerInfoIsValid()) {
+        alert("Veuillez remplir les informations personnelles avant de continuer.");
+        return;
+      }
+
+      if (this.checkoutStep === 3 && !this.paymentInfoIsValid()) {
+        alert("Veuillez remplir les informations de paiement fictif avant de confirmer.");
+        return;
+      }
+
+      if (this.checkoutStep < 4) {
+        this.checkoutStep += 1;
+        this.scrollToSection("panier");
+      }
     },
 
-    confirmOrder() {
-      this.checkoutStep = 3;
-      this.orderNumber = Math.floor(100000 + Math.random() * 900000);
-      this.showToast("Commande confirmée.");
+    previousStep() {
+      if (this.checkoutStep > 1) {
+        this.checkoutStep -= 1;
+        this.scrollToSection("panier");
+      }
     },
 
-    stepClass(index) {
-      return {
-        active: this.checkoutStep === index,
-        done: this.checkoutStep > index
-      };
+    customerInfoIsValid() {
+      return (
+        this.customer.name.trim() !== "" &&
+        this.customer.email.trim() !== "" &&
+        this.customer.address.trim() !== "" &&
+        this.customer.city.trim() !== "" &&
+        this.customer.postal.trim() !== ""
+      );
+    },
+
+    paymentInfoIsValid() {
+      return (
+        this.payment.cardName.trim() !== "" &&
+        this.payment.cardNumber.trim() !== "" &&
+        this.payment.expiry.trim() !== "" &&
+        this.payment.cvc.trim() !== ""
+      );
     },
 
     submitSurvey() {
       this.surveySubmitted = true;
-      this.showToast("Merci ! Ton avis a été reçu.");
-    },
-
-    showToast(message) {
-      this.toastMessage = message;
-      clearTimeout(this.toastTimer);
-      this.toastTimer = setTimeout(() => {
-        this.toastMessage = "";
-      }, 2200);
     }
   }
 }).mount("#app");

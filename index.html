@@ -5,352 +5,548 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BureauZen | Boutique ergonomique</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
-<body>
-  <noscript>Ce prototype nécessite JavaScript pour fonctionner.</noscript>
 
-  <div id="app" v-cloak>
-    <header class="site-header" id="top">
-      <nav class="navbar" aria-label="Navigation principale">
-        <a class="brand" href="#top" @click.prevent="setView('shop')" aria-label="Retour à la boutique BureauZen">
-          <span class="brand-icon">BZ</span>
-          <span>
-            <strong>BureauZen</strong>
-            <small>Étudier mieux, travailler mieux</small>
-          </span>
+<body>
+  <div id="app">
+    <header class="site-header">
+      <div class="header-content">
+        <a href="#" class="logo" @click.prevent="scrollToSection('accueil')">
+          <span class="logo-icon">◌</span>
+          <span>BureauZen</span>
         </a>
 
-        <button class="menu-toggle" type="button" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen.toString()" aria-controls="main-menu">
-          ☰
-          <span class="sr-only">Ouvrir ou fermer le menu</span>
-        </button>
+        <nav class="main-nav" aria-label="Navigation principale">
+          <button @click="scrollToSection('scenario')">Scénario</button>
+          <button @click="scrollToSection('boutique')">Produits</button>
+          <button @click="scrollToSection('panier')">Panier</button>
+          <button @click="scrollToSection('sondage')">Sondage</button>
+        </nav>
 
-        <div class="nav-links" id="main-menu" :class="{ open: menuOpen }">
-          <button type="button" @click="setView('shop')">Produits</button>
-          <button type="button" @click="scrollToSection('processus')">Processus</button>
-          <button type="button" @click="scrollToSection('sondage')">Sondage</button>
-          <button class="cart-pill" type="button" @click="setView('checkout')" aria-label="Voir le panier">
-            Panier <span>{{ cartCount }}</span>
-          </button>
-        </div>
-      </nav>
+        <button class="cart-pill" @click="scrollToSection('panier')">
+          🛒 Panier
+          <span>{{ cartCount }}</span>
+        </button>
+      </div>
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-content">
-          <p class="eyebrow">Offre de lancement : livraison gratuite dès 75 $</p>
-          <h1 id="hero-title">Crée ton bureau calme, confortable et productif.</h1>
-          <p>
-            BureauZen propose des accessoires ergonomiques et organisés pour les étudiants et les personnes qui travaillent longtemps à leur bureau.
+      <section id="accueil" class="hero-section">
+        <div class="hero-text">
+          <p class="eyebrow">Boutique ergonomique pour étudiants et télétravailleurs</p>
+          <h1>Crée un espace de travail plus calme, plus confortable et plus efficace.</h1>
+          <p class="hero-description">
+            BureauZen propose des accessoires simples pour améliorer ton bureau :
+            éclairage, support d’ordinateur, rangement, confort et concentration.
           </p>
+
           <div class="hero-actions">
-            <button class="primary-btn" type="button" @click="scrollToSection('catalogue')">Magasiner maintenant</button>
-            <button class="secondary-btn" type="button" @click="scrollToSection('processus')">Voir les étapes d’achat</button>
+            <button class="primary-button" @click="scrollToSection('boutique')">
+              Explorer les produits
+            </button>
+            <button class="secondary-button" @click="startScenario">
+              Démarrer le scénario d’Alex
+            </button>
           </div>
         </div>
 
-        <aside class="hero-card" aria-label="Promotion principale">
-          <span class="discount-badge">-20 %</span>
-          <h2>Ensemble concentration</h2>
-          <p>Support laptop + lampe douce + repose-poignet.</p>
-          <strong>À partir de 89,99 $</strong>
-          <button type="button" @click="quickAddBundle">Ajouter l’ensemble</button>
-        </aside>
+        <div class="hero-card">
+          <div class="floating-badge">Offre spéciale</div>
+          <h2>Ensemble Zen Étude</h2>
+          <p>
+            Ajoute la lampe FocusGlow, le support Éléva et le repose-poignet Nuage
+            pour obtenir automatiquement <strong>20 % de rabais</strong> au panier.
+          </p>
+          <button class="primary-button full" @click="addDealBundle">
+            Ajouter l’ensemble ZEN20
+          </button>
+        </div>
       </section>
 
-      <section class="process-section" id="processus" aria-labelledby="process-title">
+      <section id="scenario" class="section">
         <div class="section-heading">
-          <p class="eyebrow">Image du système</p>
-          <h2 id="process-title">Trois processus interactifs clairement visibles</h2>
-          <p>Le prototype rend les actions importantes faciles à comprendre : explorer, acheter, puis partager son expérience.</p>
+          <p class="eyebrow">Processus interactif</p>
+          <h2>Scénarimage intégré : le parcours d’Alex</h2>
+          <p>
+            Cette section montre comment le site accompagne un utilisateur dans une
+            situation réaliste, de l’exploration jusqu’à la confirmation.
+          </p>
         </div>
 
-        <div class="process-grid">
-          <article class="process-card">
-            <span>01</span>
-            <h3>Explorer par facettes</h3>
-            <p>Filtrer les produits par catégorie, budget, ambiance, note, matériau et disponibilité.</p>
+        <div class="storyboard-grid">
+          <article class="story-card">
+            <span class="story-number">1</span>
+            <h3>Besoin initial</h3>
+            <p>
+              Alex étudie longtemps à son bureau. Il veut rendre son espace plus confortable,
+              mais il ne sait pas exactement quels produits choisir.
+            </p>
           </article>
-          <article class="process-card">
-            <span>02</span>
-            <h3>Suivre les instructions</h3>
-            <p>Le parcours d’achat montre ce qui est fait, l’étape actuelle et ce qu’il reste à compléter.</p>
+
+          <article class="story-card">
+            <span class="story-number">2</span>
+            <h3>Exploration divergente</h3>
+            <p>
+              Alex consulte plusieurs produits et utilise les filtres pour comparer les
+              catégories, les couleurs, les prix et le niveau de confort.
+            </p>
           </article>
-          <article class="process-card">
-            <span>03</span>
-            <h3>Communiquer</h3>
-            <p>Un court sondage non intrusif permet de donner une rétroaction après la visite.</p>
+
+          <article class="story-card">
+            <span class="story-number">3</span>
+            <h3>Sélection convergente</h3>
+            <p>
+              Après avoir réduit les résultats, Alex choisit quelques produits qui répondent
+              mieux à son besoin : confort, lumière douce et posture.
+            </p>
           </article>
+
+          <article class="story-card">
+            <span class="story-number">4</span>
+            <h3>Achat guidé</h3>
+            <p>
+              Le panier, les informations personnelles, le paiement fictif et la confirmation
+              sont divisés en étapes pour réduire la confusion.
+            </p>
+          </article>
+        </div>
+
+        <div class="scenario-action">
+          <button class="primary-button" @click="startScenario">
+            Appliquer les filtres du scénario
+          </button>
+          <p>
+            Le système sélectionnera automatiquement des filtres pertinents pour Alex.
+          </p>
         </div>
       </section>
 
-      <section class="shop-layout" id="catalogue" v-show="view === 'shop'" aria-labelledby="catalogue-title">
-        <aside class="filters" aria-label="Recherche à facettes">
-          <div class="filter-header">
-            <h2>Recherche à facettes</h2>
-            <button type="button" @click="resetFilters">Réinitialiser</button>
+      <section class="promo-strip">
+        <div>
+          <p class="eyebrow">Inciter à l’action</p>
+          <h2>Offre ZEN20 automatiquement appliquée</h2>
+          <p>
+            L’ensemble FocusGlow + Éléva + Nuage donne 20 % de rabais sur ces trois articles.
+            Le rabais est visible dans le panier, au paiement et à la confirmation.
+          </p>
+        </div>
+        <button class="dark-button" @click="addDealBundle">
+          Ajouter l’offre au panier
+        </button>
+      </section>
+
+      <section id="boutique" class="section shop-layout">
+        <aside class="filters-panel">
+          <div class="panel-header">
+            <p class="eyebrow">Recherche à facettes</p>
+            <h2>Filtrer les produits</h2>
           </div>
 
-          <label class="search-label" for="search">Recherche</label>
-          <input id="search" type="search" v-model="filters.query" placeholder="ex. lampe, support, câble" />
+          <label class="field-label">
+            Recherche
+            <input
+              type="search"
+              v-model="filters.search"
+              placeholder="Ex. lampe, posture, rangement..."
+            />
+          </label>
 
-          <fieldset>
-            <legend>Catégorie</legend>
-            <label v-for="category in categories" :key="category">
-              <input type="checkbox" :value="category" v-model="filters.categories" />
+          <div class="filter-group">
+            <h3>Catégorie</h3>
+            <button
+              class="filter-chip"
+              :class="{ active: filters.category === 'Tous' }"
+              @click="filters.category = 'Tous'"
+            >
+              Tous
+            </button>
+
+            <button
+              v-for="category in categories"
+              :key="category"
+              class="filter-chip"
+              :class="{ active: filters.category === category }"
+              @click="filters.category = category"
+            >
               {{ category }}
+            </button>
+          </div>
+
+          <div class="filter-group">
+            <h3>Prix maximal</h3>
+            <input
+              type="range"
+              min="20"
+              max="180"
+              step="5"
+              v-model.number="filters.maxPrice"
+            />
+            <p class="range-value">Jusqu’à {{ formatMoney(filters.maxPrice) }}</p>
+          </div>
+
+          <div class="filter-group">
+            <h3>Couleurs</h3>
+            <label v-for="color in colors" :key="color" class="checkbox-line">
+              <input type="checkbox" :value="color" v-model="filters.colors" />
+              {{ color }}
             </label>
-          </fieldset>
+          </div>
 
-          <fieldset>
-            <legend>Ambiance</legend>
-            <label v-for="mood in moods" :key="mood">
-              <input type="checkbox" :value="mood" v-model="filters.moods" />
-              {{ mood }}
-            </label>
-          </fieldset>
+          <div class="filter-group">
+            <h3>Niveau de confort</h3>
+            <select v-model="filters.comfort">
+              <option value="Tous">Tous</option>
+              <option value="Essentiel">Essentiel</option>
+              <option value="Confort">Confort</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
 
-          <fieldset>
-            <legend>Matériau principal</legend>
-            <label v-for="material in materials" :key="material">
-              <input type="checkbox" :value="material" v-model="filters.materials" />
-              {{ material }}
-            </label>
-          </fieldset>
+          <div class="filter-group">
+            <h3>Note minimale</h3>
+            <select v-model.number="filters.minRating">
+              <option :value="0">Toutes les notes</option>
+              <option :value="4">4 étoiles et plus</option>
+              <option :value="4.5">4.5 étoiles et plus</option>
+            </select>
+          </div>
 
-          <label class="range-label" for="max-price">
-            Prix maximum : <strong>{{ formatPrice(filters.maxPrice) }}</strong>
-          </label>
-          <input id="max-price" type="range" min="20" max="200" step="5" v-model.number="filters.maxPrice" />
-
-          <label class="select-label" for="rating-filter">Note minimale</label>
-          <select id="rating-filter" v-model.number="filters.minRating">
-            <option :value="0">Toutes les notes</option>
-            <option :value="4">4 étoiles et plus</option>
-            <option :value="4.5">4,5 étoiles et plus</option>
-          </select>
-
-          <label class="toggle-line">
-            <input type="checkbox" v-model="filters.inStockOnly" />
-            Seulement les produits en stock
-          </label>
+          <button class="secondary-button full" @click="resetFilters">
+            Réinitialiser les filtres
+          </button>
         </aside>
 
-        <div class="catalogue-panel">
-          <div class="section-heading align-left">
-            <p class="eyebrow">Explorer et converger</p>
-            <h2 id="catalogue-title">{{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }} trouvé{{ filteredProducts.length > 1 ? 's' : '' }}</h2>
-            <p>Les cartes indiquent le prix, les caractéristiques importantes et la disponibilité pour aider l’utilisateur à comparer rapidement.</p>
-          </div>
+        <div class="products-area">
+          <div class="products-topbar">
+            <div>
+              <p class="eyebrow">Informer</p>
+              <h2>{{ filteredProducts.length }} produit(s) trouvé(s)</h2>
+            </div>
 
-          <div class="sort-row">
-            <p>{{ activeFilterSummary }}</p>
-            <label>
+            <label class="sort-label">
               Trier par
-              <select v-model="sortBy">
+              <select v-model="filters.sort">
                 <option value="popular">Popularité</option>
-                <option value="priceAsc">Prix croissant</option>
-                <option value="priceDesc">Prix décroissant</option>
+                <option value="priceLow">Prix croissant</option>
+                <option value="priceHigh">Prix décroissant</option>
                 <option value="rating">Meilleure note</option>
               </select>
             </label>
           </div>
 
-          <div class="product-grid" v-if="filteredProducts.length">
-            <article class="product-card" v-for="product in sortedProducts" :key="product.id">
-              <div class="product-visual" :class="product.visualClass" aria-hidden="true">
-                <span>{{ product.emoji }}</span>
+          <div v-if="scenarioMode" class="info-message">
+            Les filtres du scénario d’Alex sont actifs : accessoires confortables,
+            prix raisonnable et notes élevées.
+          </div>
+
+          <div v-if="filteredProducts.length === 0" class="empty-state">
+            <h3>Aucun produit ne correspond à ces filtres.</h3>
+            <p>Essaie d’élargir le prix ou de retirer une couleur.</p>
+            <button class="primary-button" @click="resetFilters">Voir tous les produits</button>
+          </div>
+
+          <div class="products-grid">
+            <article v-for="product in filteredProducts" :key="product.id" class="product-card">
+              <div class="product-visual">
+                <span>{{ product.icon }}</span>
+                <small v-if="product.deal">ZEN20</small>
               </div>
-              <div class="product-body">
+
+              <div class="product-content">
                 <div class="product-meta">
                   <span>{{ product.category }}</span>
-                  <span>★ {{ product.rating }}</span>
+                  <span>⭐ {{ product.rating }}</span>
                 </div>
+
                 <h3>{{ product.name }}</h3>
                 <p>{{ product.description }}</p>
-                <ul>
-                  <li>{{ product.mood }}</li>
-                  <li>{{ product.material }}</li>
-                  <li>{{ product.stock ? 'En stock' : 'Précommande' }}</li>
-                </ul>
+
+                <div class="tag-row">
+                  <span>{{ product.color }}</span>
+                  <span>{{ product.comfort }}</span>
+                </div>
+
                 <div class="product-footer">
-                  <strong>{{ formatPrice(product.price) }}</strong>
-                  <button type="button" @click="addToCart(product)" :disabled="!product.stock">
-                    {{ product.stock ? 'Ajouter' : 'Indisponible' }}
+                  <strong>{{ formatMoney(product.price) }}</strong>
+                  <button class="primary-button small" @click="addToCart(product)">
+                    Ajouter
                   </button>
                 </div>
               </div>
             </article>
           </div>
-
-          <div class="empty-state" v-else>
-            <h3>Aucun produit ne correspond aux filtres.</h3>
-            <p>Essaie d’élargir ton budget ou de retirer une facette.</p>
-            <button type="button" @click="resetFilters">Réinitialiser la recherche</button>
-          </div>
         </div>
       </section>
 
-      <section class="checkout" v-show="view === 'checkout'" aria-labelledby="checkout-title">
+      <section id="panier" class="section checkout-section">
         <div class="section-heading">
           <p class="eyebrow">Suivre des instructions</p>
-          <h2 id="checkout-title">Achat guidé en quatre étapes</h2>
-          <p>La barre d’étapes montre clairement ce qui est terminé, l’étape actuelle et ce qu’il reste à faire.</p>
+          <h2>Panier et achat guidé</h2>
+          <p>
+            Le processus est divisé en étapes visibles pour indiquer ce qui est fait,
+            ce qui est en cours et ce qui reste à faire.
+          </p>
         </div>
 
-        <ol class="stepper" aria-label="Progression de l’achat">
-          <li v-for="(step, index) in steps" :key="step" :class="stepClass(index)">
-            <span>{{ index + 1 }}</span>
-            {{ step }}
-          </li>
-        </ol>
+        <div class="stepper" aria-label="Étapes du processus d’achat">
+          <div
+            v-for="step in checkoutSteps"
+            :key="step.number"
+            class="step"
+            :class="{ active: checkoutStep === step.number, done: checkoutStep > step.number }"
+          >
+            <span>{{ step.number }}</span>
+            <p>{{ step.label }}</p>
+          </div>
+        </div>
 
-        <div class="checkout-panel">
-          <section v-if="checkoutStep === 0" aria-labelledby="cart-title">
-            <h3 id="cart-title">Votre panier</h3>
-            <div class="cart-empty" v-if="cart.length === 0">
-              <p>Ton panier est vide. Ajoute au moins un produit pour commencer le paiement.</p>
-              <button type="button" @click="setView('shop')">Retour aux produits</button>
+        <div class="progress-track">
+          <div class="progress-fill" :style="{ width: progressWidth }"></div>
+        </div>
+
+        <div class="checkout-grid">
+          <div class="checkout-main">
+            <div v-if="checkoutStep === 1" class="checkout-card">
+              <h3>Étape 1 — Vérifier le panier</h3>
+
+              <div v-if="cart.length === 0" class="empty-state">
+                <h4>Ton panier est vide.</h4>
+                <p>Ajoute un produit pour commencer le processus d’achat.</p>
+                <button class="primary-button" @click="scrollToSection('boutique')">
+                  Explorer les produits
+                </button>
+              </div>
+
+              <div v-else class="cart-list">
+                <article v-for="item in cart" :key="item.id" class="cart-item">
+                  <div class="cart-item-left">
+                    <div class="cart-icon">{{ item.icon }}</div>
+                    <div>
+                      <h4>{{ item.name }}</h4>
+                      <p>{{ formatMoney(item.price) }} chacun</p>
+                      <small v-if="item.deal">Article inclus dans l’offre ZEN20</small>
+                    </div>
+                  </div>
+
+                  <div class="quantity-controls">
+                    <button @click="decreaseQuantity(item.id)">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button @click="increaseQuantity(item.id)">+</button>
+                  </div>
+
+                  <strong>{{ formatMoney(item.price * item.quantity) }}</strong>
+
+                  <button class="text-button danger" @click="removeFromCart(item.id)">
+                    Retirer
+                  </button>
+                </article>
+              </div>
+
+              <div class="checkout-actions">
+                <button class="secondary-button" @click="scrollToSection('boutique')">
+                  Continuer à magasiner
+                </button>
+                <button class="primary-button" :disabled="cart.length === 0" @click="nextStep">
+                  Continuer vers les informations
+                </button>
+              </div>
             </div>
 
-            <div v-else>
-              <article class="cart-item" v-for="item in cart" :key="item.id">
-                <div>
-                  <strong>{{ item.name }}</strong>
-                  <p>{{ formatPrice(item.price) }} × {{ item.quantity }}</p>
-                </div>
-                <div class="quantity-controls" aria-label="Contrôles de quantité">
-                  <button type="button" @click="decreaseQuantity(item.id)">−</button>
-                  <span>{{ item.quantity }}</span>
-                  <button type="button" @click="increaseQuantity(item.id)">+</button>
-                </div>
-              </article>
+            <div v-if="checkoutStep === 2" class="checkout-card">
+              <h3>Étape 2 — Informations personnelles</h3>
+              <p class="form-intro">
+                Ces informations servent seulement à simuler une commande dans le prototype.
+              </p>
 
-              <div class="total-row">
-                <span>Total estimé</span>
-                <strong>{{ formatPrice(cartTotal) }}</strong>
-              </div>
-              <button class="primary-btn full" type="button" @click="checkoutStep = 1">Continuer vers les informations</button>
+              <form class="form-grid" @submit.prevent="nextStep">
+                <label>
+                  Nom complet
+                  <input v-model.trim="customer.name" type="text" placeholder="Alex Tremblay" required />
+                </label>
+
+                <label>
+                  Courriel
+                  <input v-model.trim="customer.email" type="email" placeholder="alex@email.com" required />
+                </label>
+
+                <label class="wide">
+                  Adresse
+                  <input v-model.trim="customer.address" type="text" placeholder="123 rue Principale" required />
+                </label>
+
+                <label>
+                  Ville
+                  <input v-model.trim="customer.city" type="text" placeholder="Ottawa" required />
+                </label>
+
+                <label>
+                  Code postal
+                  <input v-model.trim="customer.postal" type="text" placeholder="K1N 6N5" required />
+                </label>
+
+                <div class="checkout-actions wide">
+                  <button type="button" class="secondary-button" @click="previousStep">
+                    Retour au panier
+                  </button>
+                  <button type="submit" class="primary-button">
+                    Continuer vers le paiement
+                  </button>
+                </div>
+              </form>
             </div>
-          </section>
 
-          <section v-if="checkoutStep === 1" aria-labelledby="info-title">
-            <h3 id="info-title">Informations personnelles</h3>
-            <form class="form-grid" @submit.prevent="goToPayment">
-              <label>
-                Nom complet
-                <input type="text" v-model.trim="customer.name" required placeholder="Ex. Alex Tremblay" />
-              </label>
-              <label>
-                Courriel
-                <input type="email" v-model.trim="customer.email" required placeholder="alex@email.com" />
-              </label>
-              <label>
-                Adresse
-                <input type="text" v-model.trim="customer.address" required placeholder="123 rue Principale" />
-              </label>
-              <label>
-                Ville
-                <input type="text" v-model.trim="customer.city" required placeholder="Ottawa" />
-              </label>
-              <div class="form-actions">
-                <button class="secondary-btn" type="button" @click="checkoutStep = 0">Retour</button>
-                <button class="primary-btn" type="submit">Continuer au paiement</button>
+            <div v-if="checkoutStep === 3" class="checkout-card">
+              <h3>Étape 3 — Paiement fictif</h3>
+              <p class="form-intro">
+                Le paiement n’est pas connecté à une vraie plateforme. Les champs servent
+                seulement à démontrer le processus.
+              </p>
+
+              <form class="form-grid" @submit.prevent="nextStep">
+                <label class="wide">
+                  Nom sur la carte
+                  <input v-model.trim="payment.cardName" type="text" placeholder="Alex Tremblay" required />
+                </label>
+
+                <label class="wide">
+                  Numéro de carte
+                  <input v-model.trim="payment.cardNumber" type="text" placeholder="4242 4242 4242 4242" required />
+                </label>
+
+                <label>
+                  Expiration
+                  <input v-model.trim="payment.expiry" type="text" placeholder="12/28" required />
+                </label>
+
+                <label>
+                  CVC
+                  <input v-model.trim="payment.cvc" type="text" placeholder="123" required />
+                </label>
+
+                <div v-if="hasDeal" class="success-message wide">
+                  Rabais ZEN20 appliqué : {{ formatMoney(discount) }} retiré de la commande.
+                </div>
+
+                <div class="checkout-actions wide">
+                  <button type="button" class="secondary-button" @click="previousStep">
+                    Retour aux informations
+                  </button>
+                  <button type="submit" class="primary-button">
+                    Confirmer la commande
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div v-if="checkoutStep === 4" class="checkout-card confirmation-card">
+              <div class="confirmation-icon">✓</div>
+              <h3>Commande confirmée</h3>
+              <p>
+                Merci {{ customer.name || "!" }} Votre commande BureauZen a été reçue.
+                Un courriel de confirmation serait envoyé à
+                <strong>{{ customer.email || "votre adresse courriel" }}</strong>.
+              </p>
+
+              <div v-if="hasDeal" class="success-message">
+                L’offre ZEN20 a bien été appliquée à votre commande.
               </div>
-            </form>
-          </section>
 
-          <section v-if="checkoutStep === 2" aria-labelledby="payment-title">
-            <h3 id="payment-title">Paiement fictif</h3>
-            <p class="form-note">Aucune vraie carte n’est utilisée. Ce formulaire sert seulement à simuler le processus d’achat.</p>
-            <form class="form-grid" @submit.prevent="confirmOrder">
-              <label>
-                Nom sur la carte
-                <input type="text" v-model.trim="payment.cardName" required placeholder="Alex Tremblay" />
-              </label>
-              <label>
-                Numéro de carte fictif
-                <input type="text" v-model.trim="payment.cardNumber" required minlength="12" maxlength="19" placeholder="4242 4242 4242 4242" />
-              </label>
-              <label>
-                Expiration
-                <input type="text" v-model.trim="payment.expiry" required placeholder="12/29" />
-              </label>
-              <label>
-                CVC
-                <input type="text" v-model.trim="payment.cvc" required minlength="3" maxlength="4" placeholder="123" />
-              </label>
-              <div class="form-actions">
-                <button class="secondary-btn" type="button" @click="checkoutStep = 1">Retour</button>
-                <button class="primary-btn" type="submit">Confirmer l’achat</button>
-              </div>
-            </form>
-          </section>
+              <button class="primary-button" @click="scrollToSection('sondage')">
+                Donner mon avis
+              </button>
+            </div>
+          </div>
 
-          <section class="confirmation" v-if="checkoutStep === 3" aria-labelledby="confirm-title">
-            <span class="success-icon">✓</span>
-            <h3 id="confirm-title">Commande confirmée</h3>
-            <p>
-              Merci {{ customer.name || 'pour votre achat' }} ! Une confirmation fictive a été préparée pour {{ customer.email || 'votre courriel' }}.
-            </p>
-            <p><strong>Numéro de commande :</strong> BZ-{{ orderNumber }}</p>
-            <button class="primary-btn" type="button" @click="scrollToSection('sondage')">Répondre au sondage</button>
-          </section>
+          <aside class="summary-card">
+            <h3>Résumé de commande</h3>
+
+            <div class="summary-line">
+              <span>Sous-total</span>
+              <strong>{{ formatMoney(subtotal) }}</strong>
+            </div>
+
+            <div class="summary-line discount" v-if="hasDeal">
+              <span>Rabais ZEN20</span>
+              <strong>-{{ formatMoney(discount) }}</strong>
+            </div>
+
+            <div class="summary-line">
+              <span>Livraison</span>
+              <strong>{{ shipping === 0 ? "Gratuite" : formatMoney(shipping) }}</strong>
+            </div>
+
+            <div class="summary-line">
+              <span>Taxes estimées</span>
+              <strong>{{ formatMoney(taxes) }}</strong>
+            </div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <strong>{{ formatMoney(total) }}</strong>
+            </div>
+
+            <div v-if="hasDeal" class="deal-box">
+              Offre appliquée : ensemble FocusGlow + Éléva + Nuage.
+            </div>
+
+            <div v-else class="deal-box muted">
+              Ajoute les trois articles ZEN20 pour activer le rabais de 20 %.
+            </div>
+          </aside>
         </div>
       </section>
 
-      <section class="survey-section" id="sondage" aria-labelledby="survey-title">
-        <div class="survey-card">
-          <div>
-            <p class="eyebrow">Processus de communication</p>
-            <h2 id="survey-title">Ton avis aide BureauZen à s’améliorer.</h2>
-            <p>
-              Le sondage reste court et positif : trois champs seulement, sans bloquer l’achat ni la navigation.
-            </p>
-          </div>
+      <section id="sondage" class="section survey-section">
+        <div class="section-heading">
+          <p class="eyebrow">Établir une connexion</p>
+          <h2>Votre avis nous aide à améliorer BureauZen</h2>
+          <p>
+            Ce court sondage n’est pas obligatoire. Il permet simplement de recueillir
+            l’impression de l’utilisateur après sa visite.
+          </p>
+        </div>
 
-          <form class="survey-form" @submit.prevent="submitSurvey" v-if="!surveySubmitted">
-            <label>
-              Comment évalues-tu ton expérience ?
-              <select v-model="survey.rating" required>
-                <option value="" disabled>Choisir une note</option>
-                <option value="5">5 - Excellente</option>
-                <option value="4">4 - Très bonne</option>
-                <option value="3">3 - Correcte</option>
-                <option value="2">2 - À améliorer</option>
-                <option value="1">1 - Difficile</option>
-              </select>
-            </label>
-            <label>
-              Qu’est-ce qui t’a aidé à choisir ?
-              <textarea v-model.trim="survey.comment" rows="4" placeholder="Ex. Les filtres m’ont aidé à trouver une lampe douce."></textarea>
-            </label>
-            <label class="toggle-line">
-              <input type="checkbox" v-model="survey.contact" />
-              J’accepte d’être contacté pour une courte question de suivi.
-            </label>
-            <button class="primary-btn" type="submit">Envoyer mon avis</button>
-          </form>
+        <div v-if="!surveySubmitted" class="survey-card">
+          <label>
+            Comment évalueriez-vous votre expérience ?
+            <select v-model="survey.rating">
+              <option value="5">5 — Très agréable</option>
+              <option value="4">4 — Bonne expérience</option>
+              <option value="3">3 — Correcte</option>
+              <option value="2">2 — À améliorer</option>
+              <option value="1">1 — Difficile à utiliser</option>
+            </select>
+          </label>
 
-          <div class="survey-thanks" v-else>
-            <span class="success-icon">✓</span>
-            <h3>Merci pour ton retour !</h3>
-            <p>Ton commentaire a été enregistré dans ce prototype.</p>
-          </div>
+          <label>
+            Qu’est-ce qui pourrait être amélioré ?
+            <textarea
+              v-model.trim="survey.comment"
+              rows="5"
+              placeholder="Écrivez un court commentaire..."
+            ></textarea>
+          </label>
+
+          <button class="primary-button" @click="submitSurvey">
+            Envoyer mon avis
+          </button>
+        </div>
+
+        <div v-else class="survey-card thank-you">
+          <h3>Merci pour votre retour !</h3>
+          <p>
+            Votre commentaire aiderait BureauZen à améliorer son expérience utilisateur
+            dans une version future.
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>© 2026 BureauZen — Prototype haute-fidélité pour SEG3525.</p>
-      <a href="#top">Retour en haut</a>
+      <p>BureauZen — Prototype haute fidélité pour le Devoir 4.</p>
+      <p>HTML + CSS + JavaScript avec Vue 3 par CDN.</p>
     </footer>
-
-    <div class="toast" role="status" aria-live="polite" v-if="toastMessage">
-      {{ toastMessage }}
-    </div>
   </div>
 
   <script src="js/app.js"></script>
